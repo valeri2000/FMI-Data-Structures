@@ -31,7 +31,7 @@ void Stack<T>::modifyCap(const float factor) {
 
 template<typename T>
 Stack<T>::Stack() {
-    this->capacity = 10;
+    this->capacity = 2;
     this->len = 0;
     this->data = new T[this->capacity];
 }
@@ -63,7 +63,7 @@ Stack<T>::~Stack() {
 template<typename T>
 T Stack<T>::top(bool& flag) const {
     flag = true;
-    if(len == 0) {
+    if(this->len == 0) {
         flag ^= 1;
         return T();
     }
@@ -73,7 +73,7 @@ T Stack<T>::top(bool& flag) const {
 template<typename T>
 void Stack<T>::pop(bool& flag) {
     flag = true;
-    if(len == 0) {
+    if(this->len == 0) {
         flag ^= 1;
     } else {
         this->len--;
