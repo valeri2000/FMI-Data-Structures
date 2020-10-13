@@ -4,42 +4,56 @@
 
 int main() {
     Stack<int> a;
-    int numb;
-    bool fl;
+    int num = -1;
 
-    assert(a.size() == 0);
-    assert(a.empty() == 1);
-    a.pop(fl);
-    assert(fl == 0);
-    numb = a.top(fl);
-    assert(fl == 0); 
+    try {
+        a.pop();
+    } catch(const char* e) {
+        std::cout << e << std::endl;
+    }
 
-    for(int i = 0; i < 10001; ++i) {
+    try {
+        num = a.top();
+    } catch(const char* e) {
+        std::cout << e << std::endl;
+    }
+
+    a.push(10);
+    assert(!a.empty());
+    a.push(12);
+    assert(a.size() == 2);
+    assert(a.top() == 12);
+    a.pop();
+    assert(a.size() == 1);
+    assert(a.top() == 10);
+    a.pop();
+    assert(a.empty());
+
+    for(int i = 0; i < 1e5; ++i) {
         a.push(i);
     }
-    Stack<int> b, c = a;
-    b = a;
-    assert(a.empty() == 0);
-    assert(a.size() == 10001);
-    assert(b.size() == 10001);
-    assert(c.size() == 10001);
-    assert(a.top(fl) == 10000);
-    assert(fl == 1);
-    a.pop(fl);
-    assert(fl == 1);
-    assert(a.top(fl) == 9999);
-    assert(fl == 1);
+    Stack<int> b = a, c;
+    c = a;
+    assert(b.size() == 1e5 && c.size() == 1e5);
 
+    int last = (int)(1e5) - 1;
     while(!a.empty()) {
-        numb = a.top(fl);
-        assert(fl == 1);
-        a.pop(fl);
-        assert(fl == 1);
+        num = a.top();
+        a.pop();
+        assert(num == last);
+        assert(a.size() == last);
+        last--;
     }
     assert(a.size() == 0);
-    assert(a.empty() == 1);
-    assert(numb == 0);
-    
-    std::cout << "Success!\n";
+
+    for(int i = 0; i < 5; ++i) {
+        a.push(i);
+    }
+    while(!a.empty()) {
+        std::cout << a.top() << std::endl;
+        a.pop();
+    }
+
+    std::cout << "\nSuccess!\n";
     return 0;
 }

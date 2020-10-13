@@ -61,25 +61,23 @@ Stack<T>::~Stack() {
 }
 
 template<typename T>
-T Stack<T>::top(bool& flag) const {
-    flag = true;
+T Stack<T>::top() const {
     if(this->len == 0) {
-        flag ^= 1;
+        throw "No top element";
         return T();
     }
     return this->data[len - 1];
 }
 
 template<typename T>
-void Stack<T>::pop(bool& flag) {
-    flag = true;
+void Stack<T>::pop() {
     if(this->len == 0) {
-        flag ^= 1;
-    } else {
-        this->len--;
-        if(this->len == this->capacity / 4) {
-            this->modifyCap(0.5f);
-        }
+        throw "Cannot pop empty stack";
+        return;
+    }
+    this->len--;
+    if(this->len == this->capacity / 4) {
+        this->modifyCap(0.5f);
     }
 }
 
@@ -100,3 +98,4 @@ void Stack<T>::push(const T& value) {
    }
    this->data[this->len++] = value;
 }
+

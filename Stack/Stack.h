@@ -12,14 +12,15 @@ class Stack {
         void delData();
         T* copyData() const;
         void modifyCap(const float); // factor * (capac)
+
     public:
         Stack();
         Stack(const Stack&);
         Stack& operator = (const Stack&);
         ~Stack();
 
-        T top(bool&) const;
-        void pop(bool&);
+        T top() const;
+        void pop();
         bool empty() const;
         size_t size() const;
         void push(const T&);
