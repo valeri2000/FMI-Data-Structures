@@ -1,49 +1,94 @@
 #include "DLinkedList.h"
+#include <iostream>
 
 #define DLL DLinkedList<T>
 #define DLLI DLinkedListIterator
 
 template <typename T>
-DLL::DLLI::DLLI(Node* newPtr) {
-    ptr = newPtr;
+DLL::Node::Node(const T& _data, Node* _prv, Node* _nxt, const bool _isEnd) {
+    data = _data, prv = _prv, nxt = _nxt, isEnd = _isEnd;
+}
+
+template <typename T>
+void DLL::DLLI::copyIt(const DLLI& other) {
+    ptr = other.ptr;
+    lastElemPtr = other.lastElemPtr;
+    passedLast = other.passedLast;
+}
+
+template <typename T>
+DLL::DLLI::DLLI(Node* _ptr, Node* _lastElemPtr, const bool _passedLast) {
+    ptr = _ptr;
+    lastElemPtr = _lastElemPtr;
+    passedLast = _passedLast;
 }
 
 template <typename T>
 DLL::DLLI::DLLI(const DLLI& other) {
-    ptr = other.ptr;
+    copyIt(other);
 }
 
 template <typename T>
 typename DLL::DLLI& DLL::DLLI::operator = (const DLLI& other) {
     if(this != &other) {
-        ptr = other.ptr;
+        copyIt(other);
     }
     return *this;
 }
 
 template <typename T>
 typename DLL::DLLI& DLL::DLLI::operator ++ () {
-    ptr = ptr->nxt;
+    if(passedLast == false) {
+        if(ptr->isEnd == true) {
+            lastElemPtr = ptr;
+            ptr = nullptr;
+            passedLast = true;
+        }
+        else {
+            ptr = ptr->nxt;
+        }
+    }
     return *this;
 }
 
 template <typename T>
 typename DLL::DLLI DLL::DLLI::operator ++ (int a) {
-    DLLI temp(ptr);
-    ptr = ptr->nxt;
+    DLLI temp(ptr, lastElemPtr, passedLast);
+    if(passedLast == false) {
+        if(ptr->isEnd == true) {
+            lastElemPtr = ptr;
+            ptr = nullptr;
+            passedLast = true;
+        }
+        else {
+            ptr = ptr->nxt;
+        }
+    }
     return temp;
 }
 
 template <typename T>
 typename DLL::DLLI& DLL::DLLI::operator -- () {
-    ptr = ptr->prv;
+    if(passedLast == true) {
+        passedLast = false;
+        ptr = lastElemPtr;
+    }
+    else {
+        ptr = ptr->prv;
+    }
     return *this;
 }
 
 template <typename T>
 typename DLL::DLLI DLL::DLLI::operator -- (int a) {
-    DLLI temp(ptr);
-    ptr = ptr->prv;
+    DLLI temp(ptr, lastElemPtr, passedLast);
+    if(passedLast == true) {
+        passedLast = false;
+        ptr = lastElemPtr;
+    }
+    else {
+        ptr = ptr->prv;
+    }
     return temp;
 }
 
@@ -74,13 +119,16 @@ void DLL::helpCopy(const DLL& other) {
     if(other.len == 0) {
         return;
     }
+    if(other.len == 1) {
+        push_back((other.head)->data);
+        return;
+    }
     Node* temp = other.head;
-    size_t curr = 0;
-    while(curr != other.len) {
+    while(temp->nxt != other.head) {
         push_back(temp->data);
         temp = temp->nxt;
-        ++curr;
     }
+    push_back(temp->data);
 }
 
 template <typename T>
@@ -96,6 +144,8 @@ DLL::~DLinkedList() {
 
 template <typename T>
 DLL::DLinkedList(const DLL& other) {
+    head = nullptr;
+    len = 0;
     helpCopy(other);
 }
 
@@ -106,6 +156,16 @@ DLL& DLL::operator = (const DLL& other) {
         copy(other);
     }
     return *this;
+}
+
+template <typename T>
+typename DLL::DLLI DLL::begin() {
+    return DLLI(head);
+}
+
+template <typename T>
+typename DLL::DLLI DLL::end() {
+    return DLLI(nullptr, head->prv, true);
 }
 
 template <typename T>
@@ -149,15 +209,16 @@ void DLL::assign(const size_t n, const T& value) {
 template <typename T>
 void DLL::push_front(const T& value) {
     if(len == 0) {
-        head = new Node({value, nullptr, nullptr});
+        head = new Node(value, nullptr, nullptr, true);
         len++;
         return;
     }
-    Node* newHead = new Node({value, nullptr, head});
+    Node* newHead = new Node(value, nullptr, head);
     if(len == 1) {
         newHead->prv = head;
         head->prv = newHead;
         head->nxt = newHead;
+        head->isEnd = true;
         head = newHead;
         len++;
         return;
@@ -173,24 +234,24 @@ void DLL::push_front(const T& value) {
 template <typename T>
 void DLL::push_back(const T& value) {
     if(len == 0) {
-        head = new Node({value, nullptr, nullptr});
+        head = new Node(value, nullptr, nullptr, true);
         len++;
         return;
     }
     if(len == 1) {
-        Node* newNode = new Node({value, head, head});
+        Node* newNode = new Node(value, head, head, true);
         head->nxt = head->prv = newNode;
+        head->isEnd = false;
         len++;
         return;
     }
     Node* tail = head;
-    size_t curr = 1;
-    while(curr != len) {
+    while(tail->nxt != head) {
         tail = tail->nxt;
-        curr++;
     }
-    Node* newTail = new Node({value, tail, head});
+    Node* newTail = new Node(value, tail, head, true);
     tail->nxt = newTail;
+    tail->isEnd = false;
     head->prv = newTail;
     len++;
 }
@@ -203,6 +264,14 @@ void DLL::pop_front() {
     if(len == 1) {
         delete head;
         head = nullptr;
+        len--;
+        return;
+    }
+    if(len == 2) {
+        Node* newHead = head->nxt;
+        newHead->prv = newHead->nxt = nullptr;
+        delete head;
+        head = newHead;
         len--;
         return;
     }
@@ -229,6 +298,7 @@ void DLL::pop_back() {
     Node* tail = head->prv;
     Node* newTail = tail->prv;
     newTail->nxt = head;
+    newTail->isEnd = true;
     head->prv = newTail;
     delete tail;
     len--;
@@ -253,7 +323,7 @@ void DLL::insertBefore(const size_t index, const T& value) {
         temp = temp->nxt;
         curr++;
     }
-    Node* newNode = new Node({value, temp->prv, temp});
+    Node* newNode = new Node(value, temp->prv, temp);
     (temp->prv)->nxt = newNode;
     temp->prv = newNode;
     len++;
@@ -290,3 +360,26 @@ template <typename T>
 void DLL::clear() {
     helpClear();
 }
+
+template <typename T>
+void DLL::filter(bool (*pred)(const T& value)) {
+    size_t index = 0;
+    DLL newList;
+    for(DLLI it = begin(); it != end(); ++it) {
+        if(pred(*it)) {
+            newList.push_back(*it);
+        }
+        ++index;
+    }
+    helpClear();
+    this = newList;
+}
+
+
+template <typename T>
+void DLL::map(T (*func)(const T& value)) {
+    for(DLLI it = begin(); it != end(); ++it) {
+        *it = func(*it);
+    }
+}
+

@@ -10,6 +10,9 @@ class DLinkedList {
             T data;
             Node* prv;
             Node* nxt;
+            bool isEnd; // for iterator
+
+            Node(const T&, Node*, Node*, const bool = false);
         };
 
         Node* head;
@@ -21,9 +24,12 @@ class DLinkedList {
         class DLinkedListIterator {
             private:
                 Node* ptr;
+                Node* lastElemPtr; // back of the list
+                bool passedLast; // have we passed it
 
+                void copyIt(const DLinkedListIterator&);
             public:
-                DLinkedListIterator(Node* = nullptr);
+                DLinkedListIterator(Node* = nullptr, Node* = nullptr, const bool = false);
                 DLinkedListIterator(const DLinkedListIterator&);
 
                 DLinkedListIterator& operator = (const DLinkedListIterator&);
@@ -41,8 +47,8 @@ class DLinkedList {
         DLinkedList(const DLinkedList&);
         DLinkedList& operator = (const DLinkedList&);
 
-        // DLinkedListIterator begin();
-        // DLinkedListIterator end();
+        DLinkedListIterator begin();
+        DLinkedListIterator end();
 
         bool empty() const;
         size_t size() const;
@@ -58,8 +64,8 @@ class DLinkedList {
         void clear();
         // void deleteDups();
         // void reverse();
-        // void filter(bool (*pred)(const T& value));
-        // void map(T (*func)(const T& value));
+        void filter(bool (*pred)(const T& value));
+        void map(T (*func)(const T& value));
 };
 
 #endif
