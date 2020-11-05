@@ -153,7 +153,7 @@ template <typename T>
 DLL& DLL::operator = (const DLL& other) {
     if(this != &other) {
         clear();
-        copy(other);
+        helpCopy(other);
     }
     return *this;
 }
@@ -372,7 +372,7 @@ void DLL::filter(bool (*pred)(const T& value)) {
         ++index;
     }
     helpClear();
-    this = newList;
+    helpCopy(newList);
 }
 
 
