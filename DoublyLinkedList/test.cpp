@@ -187,32 +187,49 @@ TEST_CASE("Iterator") {
         l.push_back(i);
         v.push_back(i);
     }
+
+    auto itt = l.begin();
+    CHECK(itt == true);
+    itt = l.end();
+    CHECK(!itt);
+
+    itt = l.find(2);
+    CHECK(*itt == 2);
+    itt = l.find(7);
+    CHECK(!itt);
+
     CHECK(*l.begin() == 1);
     l.pop_front();
     CHECK(*l.begin() == 2);
     l.push_front(1);
+
     size_t index = 0;
     for(auto it = l.begin(); it != l.end(); ++it) {
         CHECK(v[index++] == *it);
     }
+
     index = 0;
     for(auto it = l.begin(); it != l.end(); it++) {
         CHECK(v[index++] == *it);
     }
+
     index = v.size() - 1;
     for(auto it = --l.end(); it != l.begin(); --it) {
         CHECK(v[index--] == *it);
     }
+
     index = v.size() - 1;
     for(auto it = --l.end(); it != l.begin(); it--) {
         CHECK(v[index--] == *it);
     }
+
     v.pop_back();
     l.pop_back();
     index = 0;
     for(auto it = l.begin(); it != l.end(); ++it) {
         CHECK(v[index++] == *it);
     }
+
     index = v.size() - 1;
     for(auto it = --l.end(); it != l.begin(); --it) {
         CHECK(v[index--] == *it);

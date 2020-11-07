@@ -53,17 +53,8 @@ typename DLL::DLLI& DLL::DLLI::operator ++ () {
 
 template <typename T>
 typename DLL::DLLI DLL::DLLI::operator ++ (int a) {
-    DLLI temp(ptr, lastElemPtr, passedLast);
-    if(passedLast == false) {
-        if(ptr->isEnd == true) {
-            lastElemPtr = ptr;
-            ptr = nullptr;
-            passedLast = true;
-        }
-        else {
-            ptr = ptr->nxt;
-        }
-    }
+    DLLI temp(*this);
+    ++(*this);
     return temp;
 }
 
@@ -81,16 +72,21 @@ typename DLL::DLLI& DLL::DLLI::operator -- () {
 
 template <typename T>
 typename DLL::DLLI DLL::DLLI::operator -- (int a) {
-    DLLI temp(ptr, lastElemPtr, passedLast);
-    if(passedLast == true) {
-        passedLast = false;
-        ptr = lastElemPtr;
-    }
-    else {
-        ptr = ptr->prv;
-    }
+    DLLI temp(*this);
+    --(*this);
     return temp;
 }
+
+template <typename T>
+DLL::DLLI::operator bool () const {
+    return (ptr != nullptr) && (passedLast == false);
+}
+
+template <typename T>
+bool DLL::DLLI::operator ! () const {
+    return (*this) ? false : true;
+}
+
 
 template <typename T>
 T& DLL::DLLI::operator * () const {
@@ -116,19 +112,16 @@ void DLL::helpClear() {
 
 template <typename T>
 void DLL::helpCopy(const DLL& other) {
-    if(other.len == 0) {
-        return;
+    Node* curr = other.head;
+    Node* headBackup = other.head;
+    if(curr != nullptr) {
+        push_back(curr->data);
+        curr = curr->nxt;
     }
-    if(other.len == 1) {
-        push_back((other.head)->data);
-        return;
+    while(curr != nullptr && curr != headBackup) {
+        push_back(curr->data);
+        curr = curr->nxt;
     }
-    Node* temp = other.head;
-    while(temp->nxt != other.head) {
-        push_back(temp->data);
-        temp = temp->nxt;
-    }
-    push_back(temp->data);
 }
 
 template <typename T>
@@ -166,6 +159,30 @@ typename DLL::DLLI DLL::begin() {
 template <typename T>
 typename DLL::DLLI DLL::end() {
     return DLLI(nullptr, head->prv, true);
+}
+
+template <typename T>
+const typename DLL::DLLI DLL::cbegin() {
+    const DLLI res(head);
+    return res;
+}
+
+template <typename T>
+const typename DLL::DLLI DLL::cend() {
+    const DLLI res(nullptr, head->prv, true);
+    return res;
+}
+
+template <typename T>
+typename DLL::DLLI DLL::find(const T& value) {
+    DLLI res;
+    for(auto it = begin(); it != end(); ++it) {
+        if(value == *it) {
+            res = it;
+            break;
+        }
+    }
+    return res;
 }
 
 template <typename T>
@@ -208,41 +225,36 @@ void DLL::assign(const size_t n, const T& value) {
 
 template <typename T>
 void DLL::push_front(const T& value) {
-    if(len == 0) {
+    len++;
+    if(len == 1) {
         head = new Node(value, nullptr, nullptr, true);
-        len++;
         return;
     }
     Node* newHead = new Node(value, nullptr, head);
-    if(len == 1) {
+    if(len == 2) {
         newHead->prv = head;
-        head->prv = newHead;
-        head->nxt = newHead;
+        head->prv = head->nxt = newHead;
         head->isEnd = true;
         head = newHead;
-        len++;
         return;
     }
     Node* tail = head->prv;
-    head->prv = newHead;
+    head->prv = tail->nxt = newHead;
     newHead->prv = tail;
-    tail->nxt = newHead;
     head = newHead;
-    len++;
 }
 
 template <typename T>
 void DLL::push_back(const T& value) {
-    if(len == 0) {
+    len++;
+    if(len == 1) {
         head = new Node(value, nullptr, nullptr, true);
-        len++;
         return;
     }
-    if(len == 1) {
+    if(len == 2) {
         Node* newNode = new Node(value, head, head, true);
         head->nxt = head->prv = newNode;
         head->isEnd = false;
-        len++;
         return;
     }
     Node* tail = head;
@@ -250,10 +262,8 @@ void DLL::push_back(const T& value) {
         tail = tail->nxt;
     }
     Node* newTail = new Node(value, tail, head, true);
-    tail->nxt = newTail;
+    tail->nxt = head->prv = newTail;
     tail->isEnd = false;
-    head->prv = newTail;
-    len++;
 }
 
 template <typename T>
@@ -261,18 +271,17 @@ void DLL::pop_front() {
     if(len == 0) {
         throw "No elements to pop";
     }
-    if(len == 1) {
+    len--;
+    if(len == 0) {
         delete head;
         head = nullptr;
-        len--;
         return;
     }
-    if(len == 2) {
+    if(len == 1) {
         Node* newHead = head->nxt;
         newHead->prv = newHead->nxt = nullptr;
         delete head;
         head = newHead;
-        len--;
         return;
     }
     Node* tail = head->prv;
@@ -281,7 +290,6 @@ void DLL::pop_front() {
     newHead->prv = tail;
     delete head;
     head = newHead;
-    len--;
 }
 
 template <typename T>
@@ -289,10 +297,10 @@ void DLL::pop_back() {
     if(len == 0) {
         throw "No elements to pop";
     }
-    if(len == 1) {
+    len--;
+    if(len == 0) {
         delete head;
         head = nullptr;
-        len--;
         return;
     }
     Node* tail = head->prv;
@@ -301,7 +309,6 @@ void DLL::pop_back() {
     newTail->isEnd = true;
     head->prv = newTail;
     delete tail;
-    len--;
 }
 
 template <typename T>
@@ -324,8 +331,7 @@ void DLL::insertBefore(const size_t index, const T& value) {
         curr++;
     }
     Node* newNode = new Node(value, temp->prv, temp);
-    (temp->prv)->nxt = newNode;
-    temp->prv = newNode;
+    temp->prv = (temp->prv)->nxt = newNode;
     len++;
 }
 
@@ -374,7 +380,6 @@ void DLL::filter(bool (*pred)(const T& value)) {
     helpClear();
     helpCopy(newList);
 }
-
 
 template <typename T>
 void DLL::map(T (*func)(const T& value)) {

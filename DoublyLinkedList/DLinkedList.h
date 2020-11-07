@@ -37,6 +37,8 @@ class DLinkedList {
                 DLinkedListIterator operator ++ (int);
                 DLinkedListIterator& operator -- ();
                 DLinkedListIterator operator -- (int);
+                operator bool () const;
+                bool operator ! () const;
                 T& operator * () const;
                 bool operator == (const DLinkedListIterator&) const;
                 bool operator != (const DLinkedListIterator&) const;
@@ -49,6 +51,9 @@ class DLinkedList {
 
         DLinkedListIterator begin();
         DLinkedListIterator end();
+        const DLinkedListIterator cbegin();
+        const DLinkedListIterator cend();
+        DLinkedListIterator find(const T&);
 
         bool empty() const;
         size_t size() const;
