@@ -369,10 +369,10 @@ void DLL::clear() {
 
 template <typename T>
 void DLL::reverse() {
-	if(head == nullptr || len == 1) {
-		return;
-	}
-	Node* curr = head;
+    if(head == nullptr || len == 1) {
+        return;
+    }
+    Node* curr = head;
     Node* prv = head->prv;
     do {
         Node* currNxt = curr->nxt;
