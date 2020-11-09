@@ -368,6 +368,25 @@ void DLL::clear() {
 }
 
 template <typename T>
+void DLL::reverse() {
+	if(head == nullptr || len == 1) {
+		return;
+	}
+	Node* curr = head;
+    Node* prv = head->prv;
+    do {
+        Node* currNxt = curr->nxt;
+        curr->nxt = prv;
+        prv->prv = curr;
+        prv = curr;
+        curr = currNxt;
+    } while(curr != head);
+    head->isEnd = true;
+    head = head->nxt;
+    head->isEnd = false;
+}
+
+template <typename T>
 void DLL::filter(bool (*pred)(const T& value)) {
     size_t index = 0;
     DLL newList;

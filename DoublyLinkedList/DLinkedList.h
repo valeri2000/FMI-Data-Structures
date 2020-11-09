@@ -67,6 +67,7 @@ class DLinkedList {
         void insertBefore(const size_t, const T&); // position, value 
         void erase(const size_t); // position
         void clear();
+        void reverse();
         void filter(bool (*pred)(const T& value));
         void map(T (*func)(const T& value));
 };

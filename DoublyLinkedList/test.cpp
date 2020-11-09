@@ -207,21 +207,25 @@ TEST_CASE("Iterator") {
     for(auto it = l.begin(); it != l.end(); ++it) {
         CHECK(v[index++] == *it);
     }
+    CHECK(index == v.size());
 
     index = 0;
     for(auto it = l.begin(); it != l.end(); it++) {
         CHECK(v[index++] == *it);
     }
+    CHECK(index == v.size());
 
     index = v.size() - 1;
     for(auto it = --l.end(); it != l.begin(); --it) {
         CHECK(v[index--] == *it);
     }
+    CHECK(index == 0);
 
     index = v.size() - 1;
     for(auto it = --l.end(); it != l.begin(); it--) {
         CHECK(v[index--] == *it);
     }
+    CHECK(index == 0);
 
     v.pop_back();
     l.pop_back();
@@ -229,10 +233,38 @@ TEST_CASE("Iterator") {
     for(auto it = l.begin(); it != l.end(); ++it) {
         CHECK(v[index++] == *it);
     }
+    CHECK(index == v.size());
 
     index = v.size() - 1;
     for(auto it = --l.end(); it != l.begin(); --it) {
         CHECK(v[index--] == *it);
     }
+    CHECK(index == 0);
 }
+
+TEST_CASE("reverse()") {
+    DLinkedList<int> l;
+    std::vector<int> v, v1;
+    for(int i = 1; i <= 6; ++i) {
+        l.push_back(i);
+        v.push_back(i);
+    }
+    l.reverse();
+    for(auto it = l.begin(); it != l.end(); ++it) {
+        v1.push_back(*it);
+    }
+    std::reverse(v1.begin(), v1.end());
+    CHECK(v1 == v);
+
+    v.clear(); v1.clear(); l.clear();
+    l.push_back(1), v.push_back(1);
+    l.push_back(2), v.push_back(2);
+    l.reverse();
+    for(auto it = l.begin(); it != l.end(); ++it) {
+        v1.push_back(*it);
+    }
+    std::reverse(v1.begin(), v1.end());
+    CHECK(v1 == v);
+}
+
 
