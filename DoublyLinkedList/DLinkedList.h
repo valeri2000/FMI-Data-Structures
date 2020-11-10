@@ -22,6 +22,8 @@ class DLinkedList {
         void helpCopy(const DLinkedList&);
     public:
         class DLinkedListIterator {
+            friend class DLinkedList;
+
             private:
                 Node* ptr;
                 Node* lastElemPtr; // back of the list
@@ -54,6 +56,9 @@ class DLinkedList {
         const DLinkedListIterator cbegin();
         const DLinkedListIterator cend();
         DLinkedListIterator find(const T&);
+
+        void insertBefore(const DLinkedListIterator&, const T&);
+        void insertAfter(const DLinkedListIterator&, const T&);
 
         bool empty() const;
         size_t size() const;

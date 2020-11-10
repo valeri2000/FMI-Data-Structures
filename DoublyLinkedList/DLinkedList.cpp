@@ -186,6 +186,41 @@ typename DLL::DLLI DLL::find(const T& value) {
 }
 
 template <typename T>
+void DLL::insertBefore(const DLLI& it, const T& value) {
+    if(!it) { return; }
+    if(it.passedLast == true) {
+        push_back(value);
+        return;
+    }
+    if(it.ptr == head || len < 2) {
+        push_front(value);
+        return;
+    }
+    Node* curr = it.ptr;
+    Node* prvCurr = curr->prv;
+    Node* newNode = new Node(value, prvCurr, curr);
+    prvCurr->nxt = newNode;
+    curr->prv = newNode;
+    len++;
+}
+
+template <typename T>
+void DLL::insertAfter(const DLLI& it, const T& value) {
+    if(!it) { return; }
+    if(it.ptr == head || len < 2 
+       || it.passedLast == true || it.ptr == head->prv) {
+        push_back(value);
+        return;
+    }
+    Node* curr = it.ptr;
+    Node* nxtCurr = curr->nxt;
+    Node* newNode = new Node(value, curr, nxtCurr);
+    curr->nxt = newNode;
+    nxtCurr->prv = newNode;
+    len++;
+}
+
+template <typename T>
 bool DLL::empty() const {
     return len == 0;
 }

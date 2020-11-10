@@ -267,4 +267,29 @@ TEST_CASE("reverse()") {
     CHECK(v1 == v);
 }
 
+TEST_CASE("insertBefore(), insertAfter()") {
+    DLinkedList<int> l;
+    for(int i = 2; i <= 5; ++i) {
+        if(i == 3) { continue; }
+        l.push_back(i);
+    }
+    auto it = l.find(2);
+    l.insertBefore(it, 1);
+    l.insertAfter(it, 3);
+    it = l.find(1);
+    l.insertBefore(it, 0);
+    it = l.find(5);
+    l.insertAfter(it, 6);
+    std::vector<int> v = {0, 1, 2, 3, 4, 5, 6}, v1, v2;
+    for(it = l.begin(); it != l.end(); ++it) {
+        v1.push_back(*it);
+    }
+    for(it = (--l.end()); it != l.begin(); --it) {
+        v2.push_back(*it);
+    }
+    v2.push_back(*l.begin());
+    std::reverse(v2.begin(), v2.end());
+    CHECK(v == v1);
+    CHECK(v == v2);
+}
 
