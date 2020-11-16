@@ -87,6 +87,20 @@ std::pair<Value, bool> BST<Key, Value>::helpSearch(
 }
 
 template <typename Key, typename Value>
+typename BST<Key, Value>::Node* BST<Key, Value>::insert(Node* curr, const std::pair<Key, Value>& p) {
+    if(curr == nullptr) {
+        return new Node(p.first, p.second);
+    }
+    if(curr->key < p.first) {
+        curr->right = insert(curr->right, p);
+    } else if(curr->key > p.first) {
+        curr->left = insert(curr->left, p);
+    }
+    return curr;
+}
+
+
+template <typename Key, typename Value>
 std::pair<unsigned, unsigned> BST<Key, Value>::dfs(Node* curr) const {
     std::pair<unsigned, unsigned> res(0, 0);
     if(curr == nullptr) {
@@ -146,6 +160,12 @@ template <typename Key, typename Value>
 std::pair<Value, bool> BST<Key, Value>::search(const Key& key) const {
     return helpSearch(root, key);
 }
+
+template <typename Key, typename Value>
+void BST<Key, Value>::insert(const std::pair<Key, Value>& p) {
+    root = insert(root, p);
+}
+
 
 template <typename Key, typename Value>
 unsigned BST<Key, Value>::height() const {

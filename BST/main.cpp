@@ -23,6 +23,13 @@ int main() {
     std::cout << "Height: " << tree.height()
               << "\nLeaves: " << tree.countLeaves() << std::endl;
 
+    tree.insert(std::make_pair(10, "Ten"));
+    tree.print();
+    std::cout << "Height: " << tree.height()
+              << "\nLeaves: " << tree.countLeaves() << std::endl;
+    std::cout << "10: " << tree.search(10).first << std::endl;
+
+
     //BST<int, std::string> tree1(tree), tree2;
     //tree2 = tree;
     //tree2.print();
