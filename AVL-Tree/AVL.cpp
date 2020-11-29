@@ -96,6 +96,25 @@ typename TAVL::Node* TAVL::insert(Node* curr, const Key& key, const Value& value
 }
 
 template<typename Key, typename Value>
+std::pair<Value, bool> TAVL::find(Node* curr, const Key& key) const {
+    if(curr == nullptr) {
+        return std::make_pair(Value(), false);
+    }
+    if(curr->key > key) {
+        return find(curr->left, key);
+    }
+    if(curr->key < key) {
+        return find(curr->right, key);
+    }
+    return std::make_pair(curr->value, true);
+}
+
+template<typename Key, typename Value>
+std::pair<Value, bool> TAVL::find(const Key& key) const {
+    return find(root, key);
+}
+
+template<typename Key, typename Value>
 void TAVL::printKeys(Node* curr, unsigned offs) const {
     if(curr == nullptr) {
         return;
