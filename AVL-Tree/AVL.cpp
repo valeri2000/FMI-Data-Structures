@@ -96,6 +96,56 @@ typename TAVL::Node* TAVL::insert(Node* curr, const Key& key, const Value& value
 }
 
 template<typename Key, typename Value>
+typename TAVL::Node* TAVL::remove(Node* curr, const Key& key) {
+    if(curr == nullptr) {
+        return nullptr;
+    }
+    if(key < curr->key) {
+        curr->left = remove(curr->left, key);
+    } else if(key > curr->key) {
+        curr->right = remove(curr->right, key);
+    } else {
+        if(curr->left == nullptr && curr->right == nullptr) {
+            delete curr;
+            curr = nullptr;
+        } else if(curr->left == nullptr && curr->right) {
+            Node* temp = curr->right;
+            *curr = *temp;
+            delete temp;
+        } else if(curr->left && curr->right == nullptr) {
+            Node* temp = curr->left;
+            *curr = *temp;
+            delete temp;
+        } else { // 2 children
+            Node* minNode = curr->right;
+            while(minNode->left != nullptr) {
+                minNode = minNode->left;
+            }
+            curr->key = minNode->key, curr->value = minNode->value;
+            curr->right = remove(curr->right, curr->key); // we will get to trivial case
+        }
+    }
+
+    if(curr == nullptr) {
+        return nullptr;
+    }
+    curr->height = 1 + std::max(getHeight(curr->left), getHeight(curr->right));
+    int currBalance = getBalance(curr);
+    if(currBalance > 1) {
+        if(getBalance(curr->left) < 0) {
+            curr->left = rotateLeft(curr->left);
+        }
+        return rotateRight(curr);
+    } else if(currBalance < -1) {
+        if(getBalance(curr->right) > 0) {
+            curr->right = rotateRight(curr->right);
+        }
+        return rotateLeft(curr);
+    }
+    return curr;
+}
+
+template<typename Key, typename Value>
 std::pair<Value, bool> TAVL::find(Node* curr, const Key& key) const {
     if(curr == nullptr) {
         return std::make_pair(Value(), false);
@@ -157,6 +207,11 @@ TAVL& TAVL::operator = (const AVL& other) {
 template<typename Key, typename Value>
 void TAVL::insert(const Key& key, const Value& value) {
     root = insert(root, key, value);
+}
+
+template<typename Key, typename Value>
+void TAVL::remove(const Key& key) {
+    root = remove(root, key);
 }
 
 template<typename Key, typename Value>

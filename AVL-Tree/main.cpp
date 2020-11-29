@@ -1,4 +1,7 @@
 #include "AVL.cpp"
+#include <vector>
+#include <algorithm>
+#include <ctime>
 
 int main() {
     AVL<int, std::string> tree;
@@ -17,6 +20,7 @@ int main() {
     tree.insert(-3, "03");
     tree.printKeys();
     
+    /*
     auto p = tree.find(5);
     std::cout << p.first << ' ' << p.second << std::endl;
     p = tree.find(0);
@@ -29,6 +33,14 @@ int main() {
     std::cout << p.second << std::endl;
     p = tree.find(10);
     std::cout << p.second << std::endl;
+    */
+
+    std::vector<int> v = {1, 2, 4, 5, 6,  9, 0, -2, -3};
+    srand(time(NULL));
+    std::random_shuffle(v.begin(), v.end());
+    v.pop_back(); v.pop_back(); v.pop_back();
+    for(const int& i : v) tree.remove(i);
+    tree.printKeys();
 
     AVL<int, std::string> tree2(tree), tree3;
     tree3 = tree;

@@ -25,6 +25,7 @@ class AVL {
         Node* copy(const Node*);
         void del(Node*&);
         Node* insert(Node*, const Key&, const Value&);
+        Node* remove(Node*, const Key&);
         std::pair<Value, bool> find(Node*, const Key&) const;
         void printKeys(Node*, unsigned) const;
 
@@ -35,7 +36,7 @@ class AVL {
         AVL& operator = (const AVL&);
 
         void insert(const Key&, const Value&);
-        // void remove(const Key&);
+        void remove(const Key&);
         std::pair<Value, bool> find(const Key&) const;
         void printKeys() const;
 };
