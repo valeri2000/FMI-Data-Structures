@@ -23,6 +23,7 @@ class BST {
         void helpPrint(Node*, unsigned) const;
         std::pair<Value, bool> helpSearch(Node*, const Key&) const;
         Node* insert(Node*, const std::pair<Key, Value>&);
+        Node* remove(Node*, const Key&);
         std::pair<unsigned, unsigned> dfs(Node*) const; // depth, leaves
 
         Node* root;
@@ -38,7 +39,7 @@ class BST {
         void inorderPrint() const;
         std::pair<Value, bool> search(const Key&) const;
         void insert(const std::pair<Key, Value>&);
-        // void remove(const Key&);
+        void remove(const Key&);
         unsigned height() const;
         unsigned countLeaves() const;
 };

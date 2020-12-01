@@ -29,6 +29,12 @@ int main() {
               << "\nLeaves: " << tree.countLeaves() << std::endl;
     std::cout << "10: " << tree.search(10).first << std::endl;
 
+    tree.remove(4);
+    tree.print();
+    tree.remove(5);
+    tree.print();
+    tree.remove(2);
+    tree.print();
 
     //BST<int, std::string> tree1(tree), tree2;
     //tree2 = tree;

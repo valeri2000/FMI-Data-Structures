@@ -99,6 +99,40 @@ typename BST<Key, Value>::Node* BST<Key, Value>::insert(Node* curr, const std::p
     return curr;
 }
 
+template <typename Key, typename Value>
+typename BST<Key, Value>::Node* BST<Key, Value>::remove(Node* curr, const Key& key) {
+    if(curr == nullptr) {
+        return nullptr;
+    }
+
+    if(key < curr->key) {
+        curr->left = remove(curr->left, key);
+    } else if(key > curr->key) {
+        curr->right = remove(curr->right, key);
+    } else {
+        if(curr->left == nullptr && curr->right == nullptr) {
+            delete curr;
+            curr = nullptr;
+        } else if(curr->left == nullptr) {
+            Node* temp = curr;
+            curr = curr->right;
+            delete temp;
+        } else if(curr->right == nullptr) {
+            Node* temp = curr;
+            curr = curr->left;
+            delete temp;
+        } else {
+            Node* minNode = curr->right;
+            while(minNode->left != nullptr) {
+                minNode = minNode->left;
+            }
+            std::cout << "We found " << curr->key << " (deletion of " << key << ") to have 2 children and min from right has key " << minNode->key << std::endl;
+            curr->key = minNode->key, curr->value = minNode->value;
+            curr->right = remove(curr->right, minNode->key);
+        }
+    }
+    return curr;
+}
 
 template <typename Key, typename Value>
 std::pair<unsigned, unsigned> BST<Key, Value>::dfs(Node* curr) const {
@@ -166,6 +200,10 @@ void BST<Key, Value>::insert(const std::pair<Key, Value>& p) {
     root = insert(root, p);
 }
 
+template <typename Key, typename Value>
+void BST<Key, Value>::remove(const Key& key) {
+    root = remove(root, key);
+}
 
 template <typename Key, typename Value>
 unsigned BST<Key, Value>::height() const {
